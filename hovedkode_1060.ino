@@ -5,35 +5,35 @@
 
 //________________________________KOMPONENTER PÅ BRETTET____________________________________
 
-//Breakbeam(balldeteksjon)
-const int breakbeam = 9; // mottaker fototransistor(BREAKBEAM)
+//Breakbeam (ball deteksjon)
+const int breakbeam = 9; // mottaker fototransistor
 
 //Knapper(start, stopp, gjenta)
-int startknapp = 2;//pin på brettet
-int stoppknapp = 4;// pin på brettet 
+int startknapp = 4;//pin på brettet
+int stoppknapp = 2;// pin på brettet 
 int gjentaknapp = 3;// pin på brettet
 
 //Lyd
 static const uint8_t PIN_MP3_TX = 11; //Kobler seg til DF spillerens RX
 static const uint8_t PIN_MP3_RX = 10;// Kobler seg til DF spillerens TX
 
-//Reed switch(tema-deteksjon)
+//Reed switch (tema deteksjon)
 const int reed_1 = 5;//pin på brettet
 const int reed_2 = 6;//pin på brettet
 const int reed_3 = 7;//pin på brettet
 
 //______________________________________VARIABLER____________________________________________
 
-//Breakbeam(balldeteksjon)
+//Breakbeam (ball deteksjon)
 bool movementdetected = false;
 
 //Knapper 
-bool forrigeKnappTilstand = HIGH; // 'KOMMENTER HER!!! 
-bool forrigeStoppTilstand = HIGH; // 
+bool forrigeKnappTilstand = HIGH; // Husker forrige tilstand til 
+bool forrigeStoppTilstand = HIGH; // Husker forrige tilstand til stoppknappen
 
 //Lyd
-SoftwareSerial mp3Serial(PIN_MP3_RX, PIN_MP3_TX);
-DFRobotDFPlayerMini avspiller;//LYD lager avspillingsobjekt
+SoftwareSerial mp3Serial(PIN_MP3_RX, PIN_MP3_TX); // Seriell kommunikasjon med DFPlayer
+DFRobotDFPlayerMini avspiller;// Objekt som styrer lydavspillingen
 
 //Reed switch
 int reedStatus1; //Variabel som senere lagrer om reed gir HIGH eller LOW 
@@ -42,7 +42,7 @@ int reedStatus3;
 
 //Valgt tema og teller for spørsmål
 int valgtTema = 0; // Valgt tema blir lagret som en int i variabelen valgtTema
-int spmteller = 1; // Teller for hvilket spørsmål man er på, slik at man kan gå videre til neste spørsmål. Baseres på filstruktur i SD kort.
+int spmteller = 1; // Teller for holde kontroll på hvilket spørsmål man er på. Baseres på filstruktur i SD kort.
 int ballTilSporsmaal = 0; // tilfeldig tall så det ikke kommer spørsmål hver gang ball går ned (1, 2 eller 3)
 int ballTeller = 0; // Teller for å holde kontroll på når spørsmål skal stilles
 
@@ -81,9 +81,8 @@ void setup(){
   Serial.println("Venter på at startknapp trykkes..."); 
   
   
-  // Kjører mens startknapp ikke er trykket eller trekantsylinderen ikke er satt på plass
+  // Kjører til tema og startknapp er trykket
   while (digitalRead(startknapp) == HIGH || valgtTema == 0) {// 
-    // ikke gjør noe, start kun når startknapp blir trykket
     velgTema(); // leser reed-switches kontinuerlig til startknapp trykkes
     
     Serial.print("valgtTema: ");
@@ -99,12 +98,13 @@ void setup(){
   
   Serial.println("Spill startet!");
   // avspiller.playFolder(4, 1); // Når vi har stopplyd
-
-  avspiller.playFolder(4, 1); // "Velkommen til spillet" leses opp
+  
+  //"Velkommen til spillet" leses opp
+  avspiller.playFolder(4, 1); 
   delay(7000);
   
   // Spiller av tema-filen
-  avspiller.playFolder(valgtTema, spmteller); //KOMMENTER HER!!!!
+  avspiller.playFolder(valgtTema, spmteller);
   spmteller++;
 }
 
@@ -112,7 +112,7 @@ void setup(){
 //_______________________________________LOOP______________________________________________
 void loop() {
 
-  while (movementdetected != true) { // så lenge en ball ikke har gått ned i hullet...
+  while (movementdetected != true) { // Overvåker spillet til en ball registreres
     detekterBevegelse(); //sjekkes det om en ball har gått ned i hullet
     sjekkGjentaknapp(); //sjekker om gjentaknappen har blitt trykket på 
     sjekkStoppknapp(); // eller om stoppknappen har blitt trykket på 
@@ -130,7 +130,7 @@ void loop() {
 
 void detekterBevegelse(){
   int status = digitalRead(breakbeam); //leser signaler fra photoresistorens pin
-  if (status == HIGH && !movementdetected) {
+  if (status == HIGH && !movementdetected) { // Registrerer at en ball har brutt lysstrålen
     movementdetected = true;
     Serial.println("Breakbeam blokkert");
   } 
