@@ -118,7 +118,7 @@ void loop() {
     sjekkStoppknapp(); // eller om stoppknappen har blitt trykket på 
   }
   
-  // Hvis det brytes ut av whileløkken, altså, bevegelse er detektert:
+  // Hvis det brytes ut av whileløkken, altså bevegelse er detektert:
   sjekkBall(); // sjekker om ballen skal trigge spørsmål, leser opp hvis ja, nullstiller movementdetected til false
 }
 
@@ -147,7 +147,7 @@ void velgTema() {
 	if (reedStatus1 == LOW) {  // LOW = magnet detektert med pullup
     valgtTema = 1;
     Serial.println("Valgt tema: Norge");
-  } else if (reedStatus2 == LOW) { // Sjekker for hver av temaene, feilmelding hvis ingen er dektektert.
+  } else if (reedStatus2 == LOW) { // Sjekker for hver av temaene, feilmelding hvis ingen er dektektert (i test).
     valgtTema = 2;
     Serial.println("Valgt tema: Reise");
   } else if (reedStatus3 == LOW) {
@@ -171,7 +171,7 @@ void lesSpm(){
 
 //Gjentar spørsmålet som har bitt stilt
 void gjenta(){
-  if (spmteller > 1) { // kan ikke spille av spor 0 - finnes ikke 
+  if (spmteller > 0) { // kan ikke spille av spor 0 - finnes ikke 
     avspiller.playFolder(valgtTema, spmteller-1); // Spiller av forrige spørsmål uten å endre telleren
   }
 }
@@ -233,9 +233,3 @@ void sjekkBall() {
   
   movementdetected = false; // nullstiller til neste ball 
 }
-
-
-
-
-
-
